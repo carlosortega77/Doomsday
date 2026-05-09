@@ -17,6 +17,38 @@
       This page requires JavaScript to display.
     </div>
   </noscript>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="theme-color" content="#faf9f5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Doomsday">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    }
+    function ensurePwaTags() {
+      if (!document.head) return;
+      if (!document.querySelector('link[rel="manifest"]')) {
+        var m = document.createElement('link');
+        m.rel = 'manifest'; m.href = 'manifest.webmanifest';
+        document.head.appendChild(m);
+      }
+      var existing = document.querySelectorAll('link[rel="apple-touch-icon"]');
+      var hasPng = false;
+      existing.forEach(function(el){ if (el.getAttribute('href') === 'icon-180.png') hasPng = true; else el.remove(); });
+      if (!hasPng) {
+        var a = document.createElement('link');
+        a.rel = 'apple-touch-icon'; a.href = 'icon-180.png';
+        document.head.appendChild(a);
+      }
+    }
+    ensurePwaTags();
+    document.addEventListener('DOMContentLoaded', ensurePwaTags);
+    window.addEventListener('load', ensurePwaTags);
+    [50, 250, 1000, 2500].forEach(function(t){ setTimeout(ensurePwaTags, t); });
+  </script>
 </head>
 <body>
   <div id="__bundler_thumbnail">
