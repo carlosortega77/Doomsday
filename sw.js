@@ -2,7 +2,7 @@
 // Sirve cache instantáneo y, en paralelo, actualiza la cache desde red.
 // La siguiente visita ya recibe el contenido fresco — sin tocar este archivo
 // cuando cambia el contenido del sitio.
-const CACHE = 'doomsday-v3';
+const CACHE = 'doomsday-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,14 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
+  // {cache: 'reload'} salta el HTTP cache del navegador en cada Request.
+  // Sin esto, GitHub Pages (max-age=600) puede servirnos un index.html
+  // caduco al popular el cache del SW, perpetuando contenido viejo.
+  e.waitUntil(
+    caches.open(CACHE).then((c) =>
+      c.addAll(ASSETS.map((url) => new Request(url, { cache: 'reload' })))
+    )
+  );
   self.skipWaiting();
 });
 
